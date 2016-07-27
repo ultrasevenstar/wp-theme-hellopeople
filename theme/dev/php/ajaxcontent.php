@@ -53,6 +53,7 @@ $hasNextData = $post_count < $posts_per_page;
 //擬似ループにてloop部品を組み立てる
 while( have_posts() ) {
 	the_post();
+	$postid = get_the_ID();
 	$permalink = get_the_permalink();
 	$time = get_the_time('Y/m/d G:i');
 	$title = get_the_title();
@@ -68,13 +69,58 @@ while( have_posts() ) {
 	$tagid = $retags[0] -> term_id;
 	$tagurl = get_tag_link( $tagid );
 
-	if( empty($img) ) {
-		//画像の指定がない場合は何も表示しない
-		$img = '';
+	if( has_post_thumbnail() ) {
+		$thumb = get_the_post_thumbnail(
+			$postid,
+			'midium'
+		);
+		$htmlHeader =
+			'<div class="post-image">'.$thumb.'</div>';
+	}else {
+		$htmlHeader = '<div class="post-noimage"></div>';
 	}
-	$img_tag = '<img class="img" src="' . $img . '">';
+
+	$postContent = mb_substr( strip_tags( $post->post_content ), 0, 100 );
+
+	$htmlTags = '';
+	if( $tags ) {
+		$li = '';
+		foreach( $tags as $tag ) {
+			$li = $li . '<li>' . $tag->name . '</li>';
+		}
+		$htmlTags = <<< EOF
+			<div>
+				<ul class="taglist">
+					{$li}
+				</ul>
+			</div>
+EOF;
+	}
+
 	$loophtml = <<< EOF
-		<div>{$title}</div>
+		<article class="post">
+			{$htmlHeader}
+			<div class="post-content">
+				<div class="post-content-inner">
+					<div class="post-content-title">
+						<a href="{$permalink}">
+							<h2 class="ttl ttl-lv3">${title}</h2>
+						</a>
+					</div>
+					<div class="post-content-body">
+						<p class="txt-small">
+							{$postContent}
+						</p>
+					</div>
+					{$htmlTags}
+					<div class="post-content-menu">
+						<a href="{$permalink}" class="txt-readmore">
+							もっと見る
+						</a>
+					</div>
+				</div>
+			</div>
+		</article>
 EOF;
 
 	$tmp = $tmp . $loophtml;

@@ -12,6 +12,8 @@ HP.AjaxManager = {
 	},
 	setParameters: function() {
 		this.$win = $(window);
+		this.$postsParent = $('.jsc-ajax-posts');
+
 		this.request = new XMLHttpRequest();
 		this.request.timeout = 10000;
 		this.data = window.AjaxData;
@@ -53,9 +55,10 @@ HP.AjaxManager = {
 		console.log('onSuccessRequest');
 		console.log( this.request );
 		var responseData = JSON.parse( this.request.response );
-		console.log( responseData );
+		if( responseData.html ) {
+			this.appendPosts( responseData.html );
+		}
 		this.data.hasNextData = responseData.hasNextData;
-		//追加エレメントの準備
 	},
 	onStateChangeRequest: function() {
 		console.log('onStateChangeRequest');
@@ -86,9 +89,12 @@ HP.AjaxManager = {
 		this.request.open('POST', this.PATH.SERVER_CONTENT);
 		this.request.setRequestHeader('content-type', 'application/json; charset=UTF-8');
 		this.request.send( this.ajaxRequestJson() );
+	},
+	appendPosts: function( childElement ) {
+		this.$postsParent.append( $(childElement) );
 	}
 };
 
-(function () {
+$(function() {
 	HP.AjaxManager.init();
-}());
+});
