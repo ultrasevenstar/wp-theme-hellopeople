@@ -16,7 +16,7 @@ $post_per_page = get_option('post_per_page');
 //$wp_query用のクエリ
 $args = array(
 	'posts_per_page' => $post_per_page,
-	'offset' => $requests['looplength'],
+	'offset' => $request['offset'],
 	'orderby' => 'post_date',
 	'order' => 'DESC',
 	'post_type' => 'post',

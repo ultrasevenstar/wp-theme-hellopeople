@@ -75,13 +75,13 @@ HP.AjaxManager = {
 	scrollSenser: function() {
 	},
 	ajaxRequestJson: function() {
-		var loopLength = $('.post').length;
+		var offset = $('.post').length;
 		var requestJson = JSON.stringify({
 			nonce	: this.data.nonce,
 			category: this.data.category,
 			tag		: this.data.tag,
 			search	: this.data.search,
-			looplength: loopLength
+			offset: offset
 		});
 		return requestJson;
 	},
