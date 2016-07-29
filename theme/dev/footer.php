@@ -42,8 +42,42 @@
 			</footer>
 		</div>
 	</section>
-	<script src="<?php bloginfo('template_url'); ?>/js/gridlayout-min.js" async></script>
-	<script src="<?php bloginfo('template_url'); ?>/js/common.js" async></script>
-	<?php wp_footer(); ?>
+	<script src="<?php bloginfo('template_url'); ?>/js/gridlayout-min.js"></script>
+	<script src="<?php bloginfo('template_url'); ?>/js/common.js"></script>
+<?php
+	/*
+	Ajax対応
+	*/
+	//リクエストに使うデータの準備
+	$nonce = wp_create_nonce();
+
+	// $is_single = is_single() ? 'true' : 'false';
+	// $categoryId = is_category() ? get_query_var('cat') : '';
+	// $tag = is_tag() ? get_query_var('tag_id') : '';
+	// $search = is_search() ? get_query_var('s') : '';
+
+	$is_single = 'false';
+	$categoryId = '';
+	$tag = '';
+	$search = '';
+
+	//スクリプトを登録する
+	wp_register_script( 'ajax', get_template_directory_uri() . '/js/ajaxnative.js' );
+	wp_localize_script(
+		'ajax',
+		'AjaxData',
+		array(
+			'flag' => true,
+			'registered' => false,
+			'nonce' => $nonce,
+			'category' => $categoryId,
+			'tag' => $tag,
+			'search' => $search,
+			'is_single' => $is_single
+		)
+	);
+	wp_enqueue_script('ajax');
+	wp_footer();
+?>
 </body>
 </html>

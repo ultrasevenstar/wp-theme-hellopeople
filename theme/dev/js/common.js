@@ -1,9 +1,38 @@
 var MBLOG = window.MBLOG || {};
 
-MBLOG.USER_AGENT = function () {
+MBLOG.CustomEvent = {
+	on: function( eventName, callback ) {
+		if( !this.eventList ) {
+			this.eventList = [];
+		}
+		this.eventList.push({
+			name: eventName,
+			callback: callback
+		});
+	},
+	trigger: function( eventName, callback ) {
+		if( !this.eventList ) {
+			return;
+		}
+		for( var i = 0, len = this.eventList.length; i < len; i++ ) {
+			var eventItem = this.eventList[i];
+			if( eventItem.name !== eventName ) {
+				continue;
+			}
+			var result = eventItem.callback();
+			if( result instanceof Promise ) {
+				result.then( callback );
+			}else {
+				callback();
+			}
+		}
+	}
+};
+
+MBLOG.UserAgent = function () {
 	this.ua = window.navigator.userAgent.toLowerCase();
 };
-MBLOG.USER_AGENT.prototype = {
+MBLOG.UserAgent.prototype = {
 	isMobile: function () {
 		return (this.ua.indexOf('windows') !== -1 && this.ua.indexOf('phone') !== -1) ||
 			this.ua.indexOf('iphone') !== -1 ||
@@ -22,11 +51,11 @@ MBLOG.USER_AGENT.prototype = {
 			this.ua.indexOf('playbook') !== -1;
 	}
 };
-MBLOG.PAGELINK = function($base){
+MBLOG.PageLink = function($base){
 	this.$base = $base;
 	this.init();
 };
-MBLOG.PAGELINK.prototype = {
+MBLOG.PageLink.prototype = {
 	init: function () {
 		this.bindEvents();
 	},
@@ -46,14 +75,14 @@ MBLOG.PAGELINK.prototype = {
 		}, 'slow');
 	}
 };
-MBLOG.GRID_LAYOUT = function ( $base ) {
+MBLOG.GridLayout = function ( $base ) {
 	this.$win = jQuery(window);
 	this.$base = $base;
 	this.init();
 };
-MBLOG.GRID_LAYOUT.prototype = {
+MBLOG.GridLayout.prototype = {
 	init: function () {
-		var isMobile = new MBLOG.USER_AGENT().isMobile();
+		var isMobile = new MBLOG.UserAgent().isMobile();
 		if( !isMobile ) {
 			this.bindEvents();
 		}else {
@@ -81,13 +110,13 @@ MBLOG.GRID_LAYOUT.prototype = {
 		this.$base.addClass('is-show');
 	}
 };
-MBLOG.RESIZE_BOX = function ( $base ) {
+MBLOG.ResizeBox = function ( $base ) {
 	this.$win = jQuery(window);
 	this.$base = $base;
 	this.$items = this.$base.find('.jsc-resizebox-item');
 	this.init();
 };
-MBLOG.RESIZE_BOX.prototype = {
+MBLOG.ResizeBox.prototype = {
 	init: function () {
 		this.bindEvents();
 	},
@@ -155,8 +184,63 @@ MBLOG.RESIZE_BOX.prototype = {
 	}
 };
 
+MBLOG.InfiniteScroll = function() {
+	this.init();
+};
+MBLOG.InfiniteScroll.prototype = {
+	Constants: {
+		LOADER_OFFSET: 15
+	},
+	init: function() {
+		this.setParameters();
+		this.bindEvents();
+	},
+	setParameters: function() {
+		this.$win = jQuery(window);
+		this.$base = jQuery('.jsc-infinitescroll');
+		this.$loader = jQuery('.jsc-infinitescroll-loader');
+	},
+	bindEvents: function() {
+		var _this = this;
+		this.$win.on('scroll', function() {
+			_this.onScrollWindow();
+		});
+	},
+	onScrollWindow: function() {
+		this.updateScrollPosition();
+	},
+	updateScrollPosition: function() {
+		if( this.willStartLoading ) {
+			console.log('canceled loading');
+			return;
+		}
+
+		this.windowBottomPos = this.$win.scrollTop() + this.$win.height();
+		this.loaderBottomPos = this.$loader.offset().top + this.$loader.height() + this.Constants.LOADER_OFFSET;
+		console.log( `windowBottomPos=${this.windowBottomPos}, loaderBottomPos=${this.loaderBottomPos}` );
+
+		this.willStartLoading = this.windowBottomPos > this.loaderBottomPos;
+
+		if( this.willStartLoading ) {
+			this.startLoading();
+		}
+	},
+	startLoading: function() {
+		var _this = this;
+		console.log('started loading');
+		MBLOG.CustomEvent.trigger('loadArticles', function() {
+			_this.endLoading();
+		});
+	},
+	endLoading: function() {
+		console.log('ended loading');
+		this.willStartLoading = false;
+	}
+};
+
 jQuery(function () {
-	new MBLOG.PAGELINK( jQuery('.jsc-pagelink') );
-	new MBLOG.RESIZE_BOX( jQuery('.jsc-resizebox') );
-	new MBLOG.GRID_LAYOUT( jQuery('.jsc-gridlayout') );
+	new MBLOG.PageLink( jQuery('.jsc-pagelink') );
+	new MBLOG.ResizeBox( jQuery('.jsc-resizebox') );
+	new MBLOG.GridLayout( jQuery('.jsc-gridlayout') );
+	new MBLOG.InfiniteScroll();
 });

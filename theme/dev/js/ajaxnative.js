@@ -1,7 +1,7 @@
-var HP = HP || {};
+var MBLOG = MBLOG || {};
 var AjaxData = AjaxData || {};
 
-HP.AjaxManager = {
+MBLOG.AjaxManager = {
 	PATH: {
 		SERVER_CONTENT: 'http://baton.hellopeople.jp/wp-content/themes/hellopeople_dev/php/ajaxcontent.php'
 	},
@@ -20,12 +20,6 @@ HP.AjaxManager = {
 	},
 	bindEvents: function() {
 		var _this = this;
-		window.addEventListener('load', function() {
-			_this.onLoadWindow();
-		});
-		window.addEventListener('scroll', function() {
-			_this.onScrollWindow();
-		});
 		this.request.onloadstart = $.proxy( this.onLoadStartRequest, this );
 		this.request.onloadend = $.proxy( this.onLoadEndRequest, this );
 		this.request.onload = $.proxy( this.onSuccessRequest, this );
@@ -33,12 +27,10 @@ HP.AjaxManager = {
 		this.request.onerror = $.proxy( this.onErrorRequest, this );
 		this.request.ontimeout = $.proxy( this.onTimeoutRequest, this );
 		this.request.onabort = $.proxy( this.onAbortRequest, this );
-	},
-	onLoadWindow: function() {
-		this.scrollSenser();
-	},
-	onScrollWindow: function() {
-		this.scrollSenser();
+
+		MBLOG.CustomEvent.on( 'loadArticles', function() {
+			_this.sendAjax();
+		});
 	},
 	onLoadStartRequest: function() {
 		console.log('onLoadStartRequest');
@@ -72,8 +64,6 @@ HP.AjaxManager = {
 	onAbortRequest: function() {
 		console.log('onAbortRequest');
 	},
-	scrollSenser: function() {
-	},
 	ajaxRequestJson: function() {
 		var offset = $('.post').length;
 		var requestJson = JSON.stringify({
@@ -86,15 +76,17 @@ HP.AjaxManager = {
 		return requestJson;
 	},
 	sendAjax: function() {
+		console.log('send ajax');
 		this.request.open('POST', this.PATH.SERVER_CONTENT);
 		this.request.setRequestHeader('content-type', 'application/json; charset=UTF-8');
 		this.request.send( this.ajaxRequestJson() );
 	},
 	appendPosts: function( childElement ) {
 		this.$postsParent.append( $(childElement) );
+		this.$win.trigger('resize');
 	}
 };
 
 $(function() {
-	HP.AjaxManager.init();
+	MBLOG.AjaxManager.init();
 });

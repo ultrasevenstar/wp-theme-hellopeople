@@ -275,8 +275,10 @@ iframe {
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+.loader {
+	text-align: center;
+}
 .pagetop {
-	margin-top: 50px;
 	text-align: center;
 }
 .container {
