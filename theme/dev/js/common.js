@@ -1,16 +1,17 @@
 var MBLOG = window.MBLOG || {};
 
 MBLOG.CustomEvent = {
-	on: function( eventName, callback ) {
+	on: function( eventName, callback, subscriber ) {
 		if( !this.eventList ) {
 			this.eventList = [];
 		}
 		this.eventList.push({
 			name: eventName,
-			callback: callback
+			callback: callback,
+			subscriber: subscriber
 		});
 	},
-	trigger: function( eventName, callback ) {
+	trigger: function( eventName, callback, publisher ) {
 		if( !this.eventList ) {
 			return;
 		}
@@ -23,7 +24,7 @@ MBLOG.CustomEvent = {
 			if( result instanceof Promise ) {
 				result.then( callback );
 			}else {
-				callback();
+				callback( result );
 			}
 		}
 	}
@@ -189,20 +190,30 @@ MBLOG.InfiniteScroll = function() {
 };
 MBLOG.InfiniteScroll.prototype = {
 	Constants: {
-		LOADER_OFFSET: 15
+		STATUS_COMPLETED: 'is-completed',
+		LOADER_OFFSET: 15,
+		FADETIME_LOADER: 300
 	},
 	init: function() {
+		var _this = this;
 		this.setParameters();
 		this.bindEvents();
+
+		setTimeout(function() {
+			_this.updateScrollPosition();
+		});
 	},
 	setParameters: function() {
 		this.$win = jQuery(window);
+		this.$body = jQuery('body');
 		this.$base = jQuery('.jsc-infinitescroll');
+		this.$loaderWrap = jQuery('.jsc-infinitescroll-loader-wrap');
 		this.$loader = jQuery('.jsc-infinitescroll-loader');
+		this.initLoading = true;
 	},
 	bindEvents: function() {
 		var _this = this;
-		this.$win.on('scroll', function() {
+		this.$win.on('scroll.InfiniteScroll', function() {
 			_this.onScrollWindow();
 		});
 	},
@@ -211,13 +222,11 @@ MBLOG.InfiniteScroll.prototype = {
 	},
 	updateScrollPosition: function() {
 		if( this.willStartLoading ) {
-			console.log('canceled loading');
 			return;
 		}
 
 		this.windowBottomPos = this.$win.scrollTop() + this.$win.height();
-		this.loaderBottomPos = this.$loader.offset().top + this.$loader.height() + this.Constants.LOADER_OFFSET;
-		console.log( `windowBottomPos=${this.windowBottomPos}, loaderBottomPos=${this.loaderBottomPos}` );
+		this.loaderBottomPos = this.$loaderWrap.offset().top + this.$loaderWrap.height() + this.Constants.LOADER_OFFSET;
 
 		this.willStartLoading = this.windowBottomPos > this.loaderBottomPos;
 
@@ -227,14 +236,33 @@ MBLOG.InfiniteScroll.prototype = {
 	},
 	startLoading: function() {
 		var _this = this;
-		console.log('started loading');
-		MBLOG.CustomEvent.trigger('loadArticles', function() {
-			_this.endLoading();
+
+		this.$loader.fadeIn( this.Constants.FADETIME_LOADER, function() {
+			MBLOG.CustomEvent.trigger('loadArticles', function( hasNextData ) {
+				_this.endLoading( hasNextData );
+			}, _this);
 		});
 	},
-	endLoading: function() {
-		console.log('ended loading');
-		this.willStartLoading = false;
+	endLoading: function( hasNextData ) {
+		var _this = this;
+		this.$loader.fadeOut( this.Constants.FADETIME_LOADER );
+
+		if( this.initLoading ) {
+			this.$body.animate({scrollTop: 0}, 500, 'swing', function() {
+				_this.willStartLoading = false;
+				_this.initLoading = false;
+			});
+		}else {
+			this.willStartLoading = false;
+		}
+
+		if( !hasNextData ) {
+			this.completedLoadingAll();
+		}
+	},
+	completedLoadingAll: function() {
+		this.$win.off('scroll.InfiniteScroll');
+		this.$base.addClass( this.Constants.STATUS_COMPLETED );
 	}
 };
 

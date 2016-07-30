@@ -8,7 +8,6 @@ MBLOG.AjaxManager = {
 	init: function() {
 		this.setParameters();
 		this.bindEvents();
-		this.sendAjax();
 	},
 	setParameters: function() {
 		this.$win = $(window);
@@ -29,23 +28,23 @@ MBLOG.AjaxManager = {
 		this.request.onabort = $.proxy( this.onAbortRequest, this );
 
 		MBLOG.CustomEvent.on( 'loadArticles', function() {
-			_this.sendAjax();
-		});
+			return _this.sendAjax();
+		}, this);
 	},
 	onLoadStartRequest: function() {
-		console.log('onLoadStartRequest');
 		if( !this.data.registered ) {
 			//ローディングを開始
 			this.data.registered = true;
 		}
 	},
 	onLoadEndRequest: function() {
-		console.log('onLoadEndRequest');
 		this.data.registered = false;
+
+		if( this.promise ) {
+			this.promise.resolve( this.data.hasNextData );
+		}
 	},
 	onSuccessRequest: function() {
-		console.log('onSuccessRequest');
-		console.log( this.request );
 		var responseData = JSON.parse( this.request.response );
 		if( responseData.html ) {
 			this.appendPosts( responseData.html );
@@ -53,18 +52,14 @@ MBLOG.AjaxManager = {
 		this.data.hasNextData = responseData.hasNextData;
 	},
 	onStateChangeRequest: function() {
-		console.log('onStateChangeRequest');
 	},
 	onErrorRequest: function() {
-		console.log('onErrorRequest');
 	},
 	onTimeoutRequest: function() {
-		console.log('onTimeoutRequest');
 	},
 	onAbortRequest: function() {
-		console.log('onAbortRequest');
 	},
-	ajaxRequestJson: function() {
+	getRequestJson: function() {
 		var offset = $('.post').length;
 		var requestJson = JSON.stringify({
 			nonce	: this.data.nonce,
@@ -76,10 +71,16 @@ MBLOG.AjaxManager = {
 		return requestJson;
 	},
 	sendAjax: function() {
-		console.log('send ajax');
-		this.request.open('POST', this.PATH.SERVER_CONTENT);
-		this.request.setRequestHeader('content-type', 'application/json; charset=UTF-8');
-		this.request.send( this.ajaxRequestJson() );
+		var _this = this;
+		return new Promise( function( resolve, reject ) {
+			_this.promise = {
+				resolve: resolve,
+				reject: reject
+			};
+			_this.request.open('POST', _this.PATH.SERVER_CONTENT);
+			_this.request.setRequestHeader('content-type', 'application/json; charset=UTF-8');
+			_this.request.send( _this.getRequestJson() );
+		});
 	},
 	appendPosts: function( childElement ) {
 		this.$postsParent.append( $(childElement) );

@@ -278,6 +278,20 @@ iframe {
 .loader {
 	text-align: center;
 }
+.loader > img {
+	display: none;
+}
+.completemessage {
+	text-align: center;
+	display: none;
+}
+.completemessage > p {
+	font-weight: 600;
+	color: #AAA;
+}
+.is-completed .completemessage {
+	display: block;
+}
 .pagetop {
 	text-align: center;
 }

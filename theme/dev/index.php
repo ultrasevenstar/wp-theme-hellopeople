@@ -15,8 +15,11 @@
 				<div class="post-container jsc-ajax-posts jss-gridlayout jsc-gridlayout cf">
 					<!-- POSTS AREA -->
 				</div>
-				<div class="loader jsc-infinitescroll-loader">
-					<img src="<?php bloginfo('template_url'); ?>/image/loader.gif" alt="loading..." width="40" height="40">
+				<div class="loader jsc-infinitescroll-loader-wrap">
+					<img class="jsc-infinitescroll-loader" src="<?php bloginfo('template_url'); ?>/image/loader.gif" alt="loading..." width="40" height="40">
+				</div>
+				<div class="completemessage">
+					<p>すべての記事を表示しました。</p>
 				</div>
 				<div class="pagetop">
 					<a href="#" class="jsc-pagelink-top">

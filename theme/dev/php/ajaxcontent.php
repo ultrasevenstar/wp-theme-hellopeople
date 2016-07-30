@@ -11,11 +11,11 @@ if( !wp_verify_nonce( $request['nonce'] ) ) {
 }
 
 //表示数の定義
-$post_per_page = get_option('post_per_page');
+$posts_per_page = get_option('posts_per_page');
 
 //$wp_query用のクエリ
 $args = array(
-	'posts_per_page' => $post_per_page,
+	'posts_per_page' => $posts_per_page,
 	'offset' => $request['offset'],
 	'orderby' => 'post_date',
 	'order' => 'DESC',
@@ -47,8 +47,8 @@ $wp_query = new WP_Query( $args );
 //クエリに合致した投稿数をカウント
 $post_count = count( $wp_query -> posts );
 
-//残存投稿数が$post_per_page以下ならfalseを返して以降のAjax通信を止める
-$hasNextData = $post_count < $posts_per_page;
+//残存投稿数が$posts_per_page以下ならfalseを返して以降のAjax通信を止める
+$hasNextData = $post_count >= $posts_per_page;
 
 //擬似ループにてloop部品を組み立てる
 while( have_posts() ) {
