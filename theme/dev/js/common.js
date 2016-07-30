@@ -57,7 +57,8 @@ MBLOG.PageLink = function(){
 };
 MBLOG.PageLink.prototype = {
 	Constants: {
-		STATUS_SCROLLED: 'is-scrolled'
+		STATUS_SCROLLED: 'is-scrolled',
+		SCROLLED_MARGIN: 60
 	},
 	init: function () {
 		this.setParameters();
@@ -81,7 +82,7 @@ MBLOG.PageLink.prototype = {
 		this.goToTop();
 	},
 	onScrollWindow: function() {
-		if( this.$win.scrollTop() === 0 ) {
+		if( this.$win.scrollTop() < this.Constants.SCROLLED_MARGIN ) {
 			this.$base.removeClass( this.Constants.STATUS_SCROLLED );
 		}else {
 			this.$base.addClass( this.Constants.STATUS_SCROLLED );

@@ -23,7 +23,7 @@
 				</div>
 				<div class="pagetop-wrap">
 					<a href="#" class="pagetop jsc-pagelink-top">
-						<img src="<?php bloginfo('template_url'); ?>/image/icon_top2.png" alt="ページ上部に戻る" width="60">
+						<img src="<?php bloginfo('template_url'); ?>/image/icon_pagetop.png" alt="ページ上部に戻る" width="44" height="44" srcset="<?php bloginfo('template_url'); ?>/image/icon_pagetop@2x.png">
 					</a>
 				</div>
 			</div>

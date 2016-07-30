@@ -301,7 +301,8 @@ iframe {
 	right: 20px;
 	display: inline-block;
 	opacity: 0;
-	transition: opacity .5s ease;
+	transition: opacity .3s ease;
+	cursor: pointer;
 }
 .is-scrolled .pagetop {
 	opacity: 1;
@@ -371,7 +372,7 @@ iframe {
 	border-bottom: 2px solid #333333;
 }
 .main-outer {
-	padding: 80px 50px 50px 50px;
+	padding: 50px;
 }
 .main,
 .sub {
