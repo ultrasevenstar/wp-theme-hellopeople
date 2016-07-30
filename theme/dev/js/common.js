@@ -52,23 +52,40 @@ MBLOG.UserAgent.prototype = {
 			this.ua.indexOf('playbook') !== -1;
 	}
 };
-MBLOG.PageLink = function($base){
-	this.$base = $base;
+MBLOG.PageLink = function(){
 	this.init();
 };
 MBLOG.PageLink.prototype = {
+	Constants: {
+		STATUS_SCROLLED: 'is-scrolled'
+	},
 	init: function () {
+		this.setParameters();
 		this.bindEvents();
 	},
+	setParameters: function() {
+		this.$win = jQuery(window);
+		this.$base = jQuery('.jsc-pagelink');
+	},
 	bindEvents: function () {
-		var self = this;
+		var _this = this;
 		this.$base.on('click', '.jsc-pagelink-top', function () {
-			self.onClickPageTop();
+			_this.onClickPageTop();
 			return false;
+		});
+		this.$win.on('scroll', function() {
+			_this.onScrollWindow();
 		});
 	},
 	onClickPageTop: function () {
 		this.goToTop();
+	},
+	onScrollWindow: function() {
+		if( this.$win.scrollTop() === 0 ) {
+			this.$base.removeClass( this.Constants.STATUS_SCROLLED );
+		}else {
+			this.$base.addClass( this.Constants.STATUS_SCROLLED );
+		}
 	},
 	goToTop: function () {
 		jQuery('html,body').animate({
@@ -91,9 +108,9 @@ MBLOG.GridLayout.prototype = {
 		}
 	},
 	bindEvents: function () {
-		var self = this;
+		var _this = this;
 		this.$win.on('load', function () {
-			self.onLoadWindow();
+			_this.onLoadWindow();
 		});
 	},
 	onLoadWindow: function () {
@@ -122,12 +139,12 @@ MBLOG.ResizeBox.prototype = {
 		this.bindEvents();
 	},
 	bindEvents: function () {
-		var self = this;
+		var _this = this;
 		this.$win.on('load', function () {
-			self.onLoadWindow();
+			_this.onLoadWindow();
 		});
 		this.$win.on('resize', function () {
-			self.onResizeWindow();
+			_this.onResizeWindow();
 		});
 	},
 	onLoadWindow: function () {
@@ -137,7 +154,7 @@ MBLOG.ResizeBox.prototype = {
 		this.adjustRowHeight();
 	},
 	adjustRowHeight: function () {
-		var self = this;
+		var _this = this;
 		var itemsLength = this.$items.length;
 		var containerWidth = this.$base.width();
 		var totalItemWidth = 0;
@@ -176,7 +193,7 @@ MBLOG.ResizeBox.prototype = {
 				}
 			});
 			for( var i = 0;i < colsCount;i++ ) {
-				jQuery(self.$items.get( itemIndex )).css({
+				jQuery(_this.$items.get( itemIndex )).css({
 					'minHeight': maxRowHeight + 'px'
 				});
 				++itemIndex;
@@ -267,8 +284,8 @@ MBLOG.InfiniteScroll.prototype = {
 };
 
 jQuery(function () {
-	new MBLOG.PageLink( jQuery('.jsc-pagelink') );
 	new MBLOG.ResizeBox( jQuery('.jsc-resizebox') );
 	new MBLOG.GridLayout( jQuery('.jsc-gridlayout') );
+	new MBLOG.PageLink();
 	new MBLOG.InfiniteScroll();
 });

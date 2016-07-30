@@ -292,8 +292,19 @@ iframe {
 .is-completed .completemessage {
 	display: block;
 }
+.pagetop-wrap {
+	margin: 0;
+}
 .pagetop {
-	text-align: center;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	display: inline-block;
+	opacity: 0;
+	transition: opacity .5s ease;
+}
+.is-scrolled .pagetop {
+	opacity: 1;
 }
 .container {
 	background: #EBEBEB;

@@ -21,8 +21,8 @@
 				<div class="completemessage">
 					<p>すべての記事を表示しました。</p>
 				</div>
-				<div class="pagetop">
-					<a href="#" class="jsc-pagelink-top">
+				<div class="pagetop-wrap">
+					<a href="#" class="pagetop jsc-pagelink-top">
 						<img src="<?php bloginfo('template_url'); ?>/image/icon_top2.png" alt="ページ上部に戻る" width="60">
 					</a>
 				</div>
