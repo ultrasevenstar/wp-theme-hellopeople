@@ -98,7 +98,7 @@ EOF;
 	}
 
 	$loophtml = <<< EOF
-		<article class="post">
+		<article class="post jsc-gridlayout-item is-standby">
 			{$htmlHeader}
 			<div class="post-content">
 				<div class="post-content-inner">

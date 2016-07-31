@@ -85,6 +85,8 @@ MBLOG.AjaxManager = {
 	appendPosts: function( childElement ) {
 		this.$postsParent.append( $(childElement) );
 		this.$win.trigger('resize');
+
+		MBLOG.CustomEvent.trigger('loadedArticles');
 	}
 };
 

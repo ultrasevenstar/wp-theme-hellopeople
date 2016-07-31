@@ -42,7 +42,7 @@
 			</footer>
 		</div>
 	</section>
-	<script src="<?php bloginfo('template_url'); ?>/js/gridlayout-min.js"></script>
+	<script src="<?php bloginfo('template_url'); ?>/js/gridlayout.js"></script>
 	<script src="<?php bloginfo('template_url'); ?>/js/common.js"></script>
 <?php
 	/*

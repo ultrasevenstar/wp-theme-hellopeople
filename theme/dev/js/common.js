@@ -21,10 +21,13 @@ MBLOG.CustomEvent = {
 				continue;
 			}
 			var result = eventItem.callback();
-			if( result instanceof Promise ) {
-				result.then( callback );
-			}else {
-				callback( result );
+
+			if( callback !== undefined && typeof callback === 'function' ) {
+				if( result instanceof Promise ) {
+					result.then( callback );
+				}else {
+					callback( result );
+				}
 			}
 		}
 	}
@@ -100,12 +103,14 @@ MBLOG.GridLayout = function ( $base ) {
 	this.init();
 };
 MBLOG.GridLayout.prototype = {
+	Constants: {
+		STATUS_STANDBY: 'is-standby',
+		FADETIME_MOVE_POSTS: 500
+	},
 	init: function () {
 		var isMobile = new MBLOG.UserAgent().isMobile();
 		if( !isMobile ) {
 			this.bindEvents();
-		}else {
-			this.showGrid();
 		}
 	},
 	bindEvents: function () {
@@ -113,20 +118,26 @@ MBLOG.GridLayout.prototype = {
 		this.$win.on('load', function () {
 			_this.onLoadWindow();
 		});
+		MBLOG.CustomEvent.on( 'loadedArticles', function() {
+			_this.showPosts();
+		});
 	},
 	onLoadWindow: function () {
 		this.layoutGrid();
-		this.showGrid();
+		this.$base.removeClass( this.Constants.STATUS_STANDBY );
 	},
 	layoutGrid: function () {
 		this.$base.pinterestGrid({
 			offsetX: 5,
 			offsetY: 5,
-			gridElement: '.post'
+			gridElement: '.jsc-gridlayout-item'
 		});
 	},
-	showGrid: function () {
-		this.$base.addClass('is-show');
+	showPosts: function () {
+		var _this = this;
+		setTimeout(function() {
+			_this.$base.find('.jsc-gridlayout-item').removeClass( _this.Constants.STATUS_STANDBY );
+		}, this.Constants.FADETIME_MOVE_POSTS);
 	}
 };
 MBLOG.ResizeBox = function ( $base ) {

@@ -12,7 +12,7 @@
 					<h2 class="ttl ttl-lv2"><?php echo $cat->name; ?></h2>
 				</div>
 <?php endif; ?>
-				<div class="post-container jsc-ajax-posts jss-gridlayout jsc-gridlayout cf">
+				<div class="post-container jsc-ajax-posts jss-gridlayout jsc-gridlayout is-standby cf">
 					<!-- POSTS AREA -->
 				</div>
 				<div class="loader jsc-infinitescroll-loader-wrap">
