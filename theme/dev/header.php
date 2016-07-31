@@ -48,6 +48,13 @@
 							</div>
 						</a>
 					</div>
+					<div class="header-menu">
+						<a href="" class="menuicon">
+							<span></span>
+							<span></span>
+							<span></span>
+						</a>
+					</div>
 <?php if ( is_active_sidebar('widgets_1') ) : ?>
 					<div class="header-nav" role="complementary">
 						<?php dynamic_sidebar( 'widgets_1' ) ?>
