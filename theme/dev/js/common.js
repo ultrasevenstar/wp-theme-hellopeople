@@ -295,9 +295,45 @@ MBLOG.InfiniteScroll.prototype = {
 	}
 };
 
+MBLOG.GlobalNavi = function() {
+	this.init();
+};
+MBLOG.GlobalNavi.prototype = {
+	Constants: {
+		STATUS_SHOW_MENU: 'is-globalmenu-show'
+	},
+	init: function() {
+		this.setParameters();
+		this.bindEvents();
+	},
+	setParameters: function() {
+		this.$base = jQuery('.jsc-globalnavi');
+		this.$trigger = this.$base.find('.jsc-globalnavi-trigger');
+	},
+	bindEvents: function() {
+		var _this = this;
+		this.$trigger.on('click', function(e) {
+			e.preventDefault();
+			_this.onClickTrigger();
+		});
+	},
+	onClickTrigger: function() {
+		this.toggleMenu();
+	},
+	toggleMenu: function() {
+		var isShow = this.$base.hasClass( this.Constants.STATUS_SHOW_MENU );
+		if( isShow ) {
+			this.$base.removeClass( this.Constants.STATUS_SHOW_MENU );
+		}else {
+			this.$base.addClass( this.Constants.STATUS_SHOW_MENU );
+		}
+	}
+};
+
 jQuery(function () {
 	new MBLOG.ResizeBox( jQuery('.jsc-resizebox') );
 	new MBLOG.GridLayout( jQuery('.jsc-gridlayout') );
+	new MBLOG.GlobalNavi();
 	new MBLOG.PageLink();
 	new MBLOG.InfiniteScroll();
 });

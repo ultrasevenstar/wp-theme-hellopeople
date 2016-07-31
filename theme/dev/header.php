@@ -33,7 +33,7 @@
 <body <?php body_class(); ?>>
 	<section class="container">
 		<div class="container-inner">
-			<div class="header-outer">
+			<div class="header-outer jsc-globalnavi">
 				<header id="header" class="header content">
 					<div class="header-logo">
 						<a href="/">
@@ -49,7 +49,7 @@
 						</a>
 					</div>
 					<div class="header-menu">
-						<a href="" class="menuicon">
+						<a href="" class="menuicon jsc-globalnavi-trigger">
 							<span></span>
 							<span></span>
 							<span></span>
