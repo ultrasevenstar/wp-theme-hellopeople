@@ -108,10 +108,7 @@ MBLOG.GridLayout.prototype = {
 		FADETIME_MOVE_POSTS: 500
 	},
 	init: function () {
-		var isMobile = new MBLOG.UserAgent().isMobile();
-		if( !isMobile ) {
-			this.bindEvents();
-		}
+		this.bindEvents();
 	},
 	bindEvents: function () {
 		var _this = this;
@@ -123,7 +120,10 @@ MBLOG.GridLayout.prototype = {
 		});
 	},
 	onLoadWindow: function () {
-		this.layoutGrid();
+		var isMobile = new MBLOG.UserAgent().isMobile();
+		if( !isMobile ) {
+			this.layoutGrid();
+		}
 		this.$base.removeClass( this.Constants.STATUS_STANDBY );
 	},
 	layoutGrid: function () {
